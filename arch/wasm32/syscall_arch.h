@@ -85,7 +85,7 @@ WALI_SYSCALL_DEF (dup2, int,int);
 WALI_SYSCALL_DEF (pause, );
 WALI_SYSCALL_DEF (nanosleep, void*,void*);
 WALI_SYSCALL_DEF (getitimer, );
-WALI_SYSCALL_DEF (alarm, int);
+WALI_SYSCALL_DEF (alarm, );
 WALI_SYSCALL_DEF (setitimer, int,void*,void*);
 WALI_SYSCALL_DEF (getpid, );
 WALI_SYSCALL_DEF (sendfile, );
