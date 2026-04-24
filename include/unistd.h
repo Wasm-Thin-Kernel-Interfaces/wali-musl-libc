@@ -183,10 +183,6 @@ char *getusershell(void);
 int acct(const char *);
 
 long syscall(long, ...);
-/* Variadic syscall typecasting support */
-#ifndef syscall
-#define syscall(...)  __SYSCALL_DISP(syscall,__VA_ARGS__)
-#endif
 
 int execvpe(const char *, char *const [], char *const []);
 int issetugid(void);
