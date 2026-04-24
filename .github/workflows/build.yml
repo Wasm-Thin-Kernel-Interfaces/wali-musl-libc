@@ -110,9 +110,11 @@ jobs:
             fi
             echo "  ok  $f is wasm"
           done
-          # libc.a is a thin/regular archive — just confirm ar can read it
-          "$GITHUB_WORKSPACE/llvm/bin/llvm-ar" t "$LIB/libc.a" | head -5
-          echo "  ok  libc.a readable ($(${GITHUB_WORKSPACE}/llvm/bin/llvm-ar t $LIB/libc.a | wc -l) members)"
+          # libc.a is a thin/regular archive — just confirm ar can read it.
+          # Run once into a variable so piping to head doesn't SIGPIPE llvm-ar.
+          members=$("$GITHUB_WORKSPACE/llvm/bin/llvm-ar" t "$LIB/libc.a")
+          echo "$members" | head -5
+          echo "  ok  libc.a readable ($(echo "$members" | wc -l) members)"
 
       - name: Upload sysroot
         uses: actions/upload-artifact@v4
