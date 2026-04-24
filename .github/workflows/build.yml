@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [master, main, dev]
+    branches: [main]
   pull_request:
-  workflow_call:
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -20,9 +20,6 @@ jobs:
           - arch: x86_64
             runs-on: ubuntu-latest
             llvm-platform: Linux-X64
-          - arch: aarch64
-            runs-on: ubuntu-24.04-arm
-            llvm-platform: Linux-ARM64
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
@@ -110,9 +107,11 @@ jobs:
             fi
             echo "  ok  $f is wasm"
           done
-          # libc.a is a thin/regular archive — just confirm ar can read it
-          "$GITHUB_WORKSPACE/llvm/bin/llvm-ar" t "$LIB/libc.a" | head -5
-          echo "  ok  libc.a readable ($(${GITHUB_WORKSPACE}/llvm/bin/llvm-ar t $LIB/libc.a | wc -l) members)"
+          # libc.a is a thin/regular archive — just confirm ar can read it.
+          # Run once into a variable so piping to head doesn't SIGPIPE llvm-ar.
+          members=$("$GITHUB_WORKSPACE/llvm/bin/llvm-ar" t "$LIB/libc.a")
+          echo "$members" | head -5
+          echo "  ok  libc.a readable ($(echo "$members" | wc -l) members)"
 
       - name: Upload sysroot
         uses: actions/upload-artifact@v4
