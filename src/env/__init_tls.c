@@ -124,7 +124,7 @@ static void static_init_tls(size_t *aux)
 #ifndef SYS_mmap2
 #define SYS_mmap2 SYS_mmap
 #endif
-		mem = (void *)__syscall_var(
+		mem = (void *) __syscall_cp(
 			SYS_mmap2,
 			0, libc.tls_size, PROT_READ|PROT_WRITE,
 			MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);

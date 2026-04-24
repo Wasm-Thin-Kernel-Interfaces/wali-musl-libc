@@ -1,11 +1,163 @@
 #ifndef _SYSCALL_VAR_H
 #define _SYSCALL_VAR_H
+#include <stdarg.h>
 #include <stdio.h>
 
 #define CASE_SYSCALL(name, ...) \
   case SYS_##name: return __syscall_SYS_##name(__VA_ARGS__); break; 
 
-/* Internal syscall implementation for non-const syscall NR invocation */
+/* Internal syscall implementation with varargs, handling parsing exact syscall ABI */
+static long __syscall_vargs(long n, va_list ap) {
+  switch(n) {
+		CASE_SYSCALL (read, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (write, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (open, va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (close, va_arg(ap, int));
+		CASE_SYSCALL (stat, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (fstat, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (lstat, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (poll, va_arg(ap, void*),va_arg(ap, unsigned long long),va_arg(ap, int));
+		CASE_SYSCALL (lseek, va_arg(ap, int),va_arg(ap, long long),va_arg(ap, int));
+		CASE_SYSCALL (mmap, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, long long));
+		CASE_SYSCALL (mprotect, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int));
+		CASE_SYSCALL (munmap, va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (brk, va_arg(ap, void*));
+		CASE_SYSCALL (rt_sigaction, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (rt_sigprocmask, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (rt_sigreturn, va_arg(ap, long));
+		CASE_SYSCALL (ioctl, va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (pread64, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, long long));
+		CASE_SYSCALL (pwrite64, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, long long));
+		CASE_SYSCALL (readv, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (writev, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (access, va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (pipe, va_arg(ap, int*));
+		CASE_SYSCALL (select, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (sched_yield, );
+		CASE_SYSCALL (mremap, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, unsigned int),va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (msync, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int));
+		CASE_SYSCALL (madvise, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int));
+		CASE_SYSCALL (dup, va_arg(ap, int));
+		CASE_SYSCALL (dup2, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (nanosleep, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (setitimer, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (getpid, );
+		CASE_SYSCALL (socket, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (connect, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (accept, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (sendto, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (recvfrom, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (sendmsg, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (recvmsg, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (shutdown, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (bind, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (listen, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (getsockname, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (getpeername, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (socketpair, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, int*));
+		CASE_SYSCALL (setsockopt, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (getsockopt, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (fork, );
+		CASE_SYSCALL (execve, va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (exit, va_arg(ap, int));
+		CASE_SYSCALL (wait4, va_arg(ap, int),va_arg(ap, int*),va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (kill, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (uname, va_arg(ap, void*));
+		CASE_SYSCALL (fcntl, va_arg(ap, int),va_arg(ap, int),va_arg(ap, unsigned long));
+		CASE_SYSCALL (flock, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (fsync, va_arg(ap, int));
+		CASE_SYSCALL (fdatasync, va_arg(ap, int));
+		CASE_SYSCALL (ftruncate, va_arg(ap, int),va_arg(ap, long long));
+		CASE_SYSCALL (getcwd, va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (chdir, va_arg(ap, void*));
+		CASE_SYSCALL (fchdir, va_arg(ap, int));
+		CASE_SYSCALL (rename, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (mkdir, va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (rmdir, va_arg(ap, void*));
+		CASE_SYSCALL (link, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (unlink, va_arg(ap, void*));
+		CASE_SYSCALL (symlink, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (readlink, va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (chmod, va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (fchmod, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (chown, va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (fchown, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (umask, va_arg(ap, int));
+		CASE_SYSCALL (gettimeofday, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (getrlimit, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (getrusage, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (sysinfo, va_arg(ap, void*));
+		CASE_SYSCALL (getuid, );
+		CASE_SYSCALL (getgid, );
+		CASE_SYSCALL (setuid, va_arg(ap, int));
+		CASE_SYSCALL (setgid, va_arg(ap, int));
+		CASE_SYSCALL (geteuid, );
+		CASE_SYSCALL (getegid, );
+		CASE_SYSCALL (setpgid, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (getppid, );
+		CASE_SYSCALL (setsid, );
+		CASE_SYSCALL (setreuid, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (setregid, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (getgroups, va_arg(ap, unsigned int),va_arg(ap, void*));
+		CASE_SYSCALL (setgroups, va_arg(ap, unsigned int),va_arg(ap, void*));
+		CASE_SYSCALL (setresuid, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (setresgid, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (getpgid, va_arg(ap, int));
+		CASE_SYSCALL (getsid, va_arg(ap, int));
+		CASE_SYSCALL (rt_sigpending, va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (rt_sigsuspend, va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (sigaltstack, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (statfs, va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (fstatfs, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (prctl, va_arg(ap, int),va_arg(ap, unsigned long),va_arg(ap, unsigned long),va_arg(ap, unsigned long),va_arg(ap, unsigned long));
+		CASE_SYSCALL (setrlimit, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (chroot, va_arg(ap, void*));
+		CASE_SYSCALL (gettid, );
+		CASE_SYSCALL (tkill, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (futex, va_arg(ap, int*),va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int*),va_arg(ap, int));
+		CASE_SYSCALL (sched_getaffinity, va_arg(ap, int),va_arg(ap, unsigned int),va_arg(ap, void*));
+		CASE_SYSCALL (getdents64, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (set_tid_address, va_arg(ap, int*));
+		CASE_SYSCALL (fadvise, va_arg(ap, int),va_arg(ap, long long),va_arg(ap, long long),va_arg(ap, int));
+		CASE_SYSCALL (clock_gettime, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (clock_getres, va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (clock_nanosleep, va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (exit_group, va_arg(ap, int));
+		CASE_SYSCALL (epoll_ctl, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (openat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (mkdirat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (fchownat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (newfstatat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (unlinkat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (linkat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (symlinkat, va_arg(ap, void*),va_arg(ap, int),va_arg(ap, void*));
+		CASE_SYSCALL (readlinkat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (fchmodat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (faccessat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (pselect6, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (ppoll, va_arg(ap, void*),va_arg(ap, unsigned long long),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (utimensat, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (epoll_pwait, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, unsigned int));
+		CASE_SYSCALL (eventfd, va_arg(ap, int));
+		CASE_SYSCALL (accept4, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (eventfd2, va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (epoll_create1, va_arg(ap, int));
+		CASE_SYSCALL (dup3, va_arg(ap, int),va_arg(ap, int),va_arg(ap, int));
+		CASE_SYSCALL (pipe2, va_arg(ap, int*),va_arg(ap, int));
+		CASE_SYSCALL (prlimit64, va_arg(ap, int),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, void*));
+		CASE_SYSCALL (renameat2, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int));
+		CASE_SYSCALL (getrandom, va_arg(ap, void*),va_arg(ap, unsigned int),va_arg(ap, int));
+		CASE_SYSCALL (statx, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, unsigned int),va_arg(ap, void*));
+		CASE_SYSCALL (faccessat2, va_arg(ap, int),va_arg(ap, void*),va_arg(ap, int),va_arg(ap, int));
+    default: {
+      printf("Invalid syscall var call -- NR %d\n",  n);
+      return -ENOSYS;
+    }
+  }
+}
+
+/* Internal syscall implementation for non-const syscall NR invocation 
+	pre-converted to `long` types */
 static long __syscall_var(long n, long a1, long a2, long a3, long a4, long a5, long a6) {
   switch(n) {
 		CASE_SYSCALL (read, (int)a1,(void*)a2,(unsigned int)a3);
